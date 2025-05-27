@@ -1,14 +1,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# Configure matplotlib to support Korean font and display minus signs correctly.
-def set_korean_visualization():
-    plt.rcParams['font.family'] = 'Malgun Gothic'  # Set font for Korean characters
-    plt.rcParams['axes.unicode_minus'] = False     # Ensure minus signs are rendered correctly
+def apply_korean_font():
+    """
+    Apply Korean font settings for matplotlib visualizations to correctly display Korean characters.
+    """
+    import matplotlib.font_manager as fm
+    font_path = 'C:/Windows/Fonts/malgun.ttf'
+    font_name = fm.FontProperties(fname=font_path).get_name()
+    plt.rc('font', family=font_name)
+    plt.rcParams['axes.unicode_minus'] = False  # Ensure minus sign is shown correctly
 
-# Load CSV data and extract year from the date column.
-def load_and_prepare_data(filepath):
-    df = pd.read_csv(filepath, encoding='utf-8')  # Load data from CSV with UTF-8 encoding
-    df['Year'] = pd.to_datetime(df['기준월']).dt.year  # Extract year from '기준월' column
+def load_data(filepath):
+    """
+    Load CSV data and extract the year from the '기준월' (base month) column.
+
+    Parameters:
+        filepath (str): Path to the CSV file.
+
+    Returns:
+        pd.DataFrame: DataFrame with a new 'Year' column extracted from '기준월'.
+    """
+    df = pd.read_csv(filepath, encoding='utf-8')
+    df['Year'] = pd.to_datetime(df['기준월']).dt.year
     return df

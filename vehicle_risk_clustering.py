@@ -44,7 +44,7 @@ def cross_validate(X, y, k, trees):
     print(f"Avg F1 Score: {np.mean(f1s):.4f}")
     return np.mean(f1s), model
 
-def train_vehicle_model(path):
+def train_vehicle_model(path, show_plots=True):
     """
     Train and evaluate Random Forest classifier to cluster vehicle risk based on type composition.
     """
@@ -72,12 +72,14 @@ def train_vehicle_model(path):
     sns.boxplot(data=df, x='Risk_Label', y='사고건수', palette='Set2')
     plt.title('Accident Count by Risk Label')
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close()
 
     df.groupby('Risk_Label')[features].mean().plot(kind='bar', figsize=(10, 6), colormap='Set2')
     plt.title('Avg Vehicle Composition by Risk Label')
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close()
 
     # Run experiments over split ratios
     configs = [(0.6, 3, 100), (0.6, 10, 5), (0.7, 3, 100), (0.7, 10, 5), (0.8, 3, 100), (0.8, 10, 5)]
@@ -107,4 +109,6 @@ def train_vehicle_model(path):
     sns.barplot(x=best_model.feature_importances_, y=features, palette='Blues_d')
     plt.title('Feature Importance in Best RF Model')
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close()
+    return best_model, results

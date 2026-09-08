@@ -1,4 +1,4 @@
-# 교통사고 위험 예측 및 지역 분석 시스템
+# Korea Traffic Accident Risk Analytics
 
 ##  프로젝트 개요
 본 프로젝트는 교통사고 및 차량등록 데이터를 기반으로 다음의 분석 및 예측을 수행하는 데이터 과학 모델링 시스템입니다.
@@ -32,7 +32,18 @@
 
 
 
-##  작동 방식
+## 실행 방법
+
+```bash
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python main.py "path/to/traffic_vehicle_data.csv"
+```
+
+서버나 CI처럼 화면이 없는 환경에서는 `--skip-plots`를 추가할 수 있습니다. 입력 CSV에는 `기준월`, `시도`, `시군구`, `사고건수`, `총_계`가 필요하며 분석별 세부 차량·부상 컬럼도 사용됩니다.
+
+## 작동 방식
 
 ### 1. 실행 파일: `main.py`
 - 전체 파이프라인을 실행합니다.
@@ -55,5 +66,12 @@
 
 - Prophet: [https://facebook.github.io/prophet/](https://facebook.github.io/prophet/)
 - Scikit-learn Random Forest: [https://scikit-learn.org/stable/modules/ensemble.html#forest](https://scikit-learn.org/stable/modules/ensemble.html#forest)
+
+## 개선 사항
+
+- 데이터 경로를 명령행 인자로 받아 환경별 하드코딩을 제거했습니다.
+- Windows와 Linux에서 동작하도록 한글 폰트 처리를 이식성 있게 구성했습니다.
+- 지역별 증감률 계산을 벡터화하고 0으로 나누는 경우를 명시적으로 처리합니다.
+- 대화형 그래프를 끌 수 있어 자동화·원격 실행이 가능합니다.
 
 

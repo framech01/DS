@@ -6,7 +6,7 @@ import seaborn as sns
 
 apply_korean_font()
 
-def analyze_regional_risk(path):
+def analyze_regional_risk(path, show_plots=True):
     """
     Analyze accident and vehicle growth by region and compute composite risk scores.
     """
@@ -18,13 +18,12 @@ def analyze_regional_risk(path):
         '총_계': 'sum'
     }).reset_index()
 
+    summary = summary.sort_values(['시군구', 'Year'])
+
     def growth_by_region(group, col):
-        """
-        Compute growth rate of a specific column grouped by city.
-        """
-        return group.groupby('시군구')[col].apply(
-            lambda x: (x.iloc[-1] - x.iloc[0]) / (x.iloc[0] + 1e-6) * 100
-        )
+        grouped = group.groupby('시군구', sort=False)[col]
+        first, last = grouped.first(), grouped.last()
+        return (last - first).div(first.replace(0, np.nan)).mul(100)
 
     growth = pd.DataFrame({
         'Accident Growth': growth_by_region(summary, '사고건수'),
@@ -70,7 +69,8 @@ def analyze_regional_risk(path):
     sns.heatmap(province_df[['Composite Score']], cmap='Reds', annot=True, fmt=".2f", ax=axes[1])
     axes[1].set_title("Composite Risk Score")
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close(fig)
 
     # Heatmap 2: risk ratio
     province_df['Risk Ratio'] = province_df['Basic Score'] / (province_df['Composite Score'] + 1e-6)
@@ -78,7 +78,8 @@ def analyze_regional_risk(path):
     sns.heatmap(province_df[['Risk Ratio']], cmap='PuBuGn', annot=True, fmt=".2f")
     plt.title("Risk Ratio")
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close()
 
     # Classify risk level based on ratio
     def classify_risk(ratio):
@@ -107,4 +108,6 @@ def analyze_regional_risk(path):
     plt.ylabel("Province")
     plt.legend(title='Level', bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()
-    plt.show()
+    if show_plots: plt.show()
+    else: plt.close()
+    return province_df

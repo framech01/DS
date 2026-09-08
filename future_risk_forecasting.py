@@ -18,7 +18,7 @@ def calc_metrics(actual, predicted):
     r2 = r2_score(actual, predicted)
     return mae, rmse, r2
 
-def run_prophet_analysis(path):
+def run_prophet_analysis(path, show_plots=True):
     """
     Train and evaluate Prophet model on accident rate forecasting with different data splits and seasonality.
     """
@@ -62,7 +62,7 @@ def run_prophet_analysis(path):
             model = Prophet(daily_seasonality=seasonal, changepoint_prior_scale=0.1)
             model.fit(train_df)
 
-            future = model.make_future_dataframe(periods=len(test_df), freq='M')
+            future = model.make_future_dataframe(periods=len(test_df), freq='MS')
             forecast = model.predict(future)
 
             y_true = test_df['y'].values
@@ -84,7 +84,8 @@ def run_prophet_analysis(path):
             plt.ylabel("Accident Rate")
             plt.legend()
             plt.tight_layout()
-            plt.show()
+            if show_plots: plt.show()
+            else: plt.close()
 
     # Print summary of all configurations
     print("\n[Evaluation Summary]")
@@ -93,3 +94,4 @@ def run_prophet_analysis(path):
 
     print("\n[Best Configuration (Lowest MAE)]")
     print(f"Best -> Train: {best[0]}%, Mode: {best[1]}, MAE: {best[2]:.4f}")
+    return results
